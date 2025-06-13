@@ -1,7 +1,7 @@
 import schedule
 import time
 from datetime import datetime, timedelta
-from .simple_crawler import SimpleCrawler
+from .unified_crawler import UnifiedCrawler
 from .logger import setup_logger
 from .config import SCHEDULE_TIME
 import sys
@@ -9,7 +9,7 @@ import sys
 class CrawlerScheduler:
     def __init__(self):
         self.logger = setup_logger('CrawlerScheduler')
-        self.simple_crawler = SimpleCrawler()
+        self.crawler = UnifiedCrawler()
         
     def run_daily_crawl(self):
         """매일 실행되는 크롤링 작업"""
@@ -19,9 +19,10 @@ class CrawlerScheduler:
         yesterday = datetime.now() - timedelta(days=1)
         
         try:
-            # Simple 크롤러 실행
-            self.logger.info("크롤러 실행 중...")
-            results = self.simple_crawler.run(yesterday)
+            # 통합 크롤러 실행
+            self.logger.info("통합 크롤러 실행 중...")
+            import asyncio
+            results = asyncio.run(self.crawler.run(yesterday))
             
             if results:
                 self.logger.info(f"크롤링 성공: {len(results)}개 경기")

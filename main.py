@@ -10,10 +10,7 @@ import os
 # 프로젝트 경로 추가
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from src.playwright_crawler import run_crawler
-from src.google_playwright_crawler import run_google_crawler
-from src.google_real_crawler import run_google_real_crawler
-from src.kbo_official_crawler import run_kbo_official_crawler
+from src.unified_crawler import run_unified_crawler
 from src.storage import Storage
 from src.scheduler import CrawlerScheduler as Scheduler
 from src.logger import setup_logger
@@ -27,9 +24,6 @@ def main():
     parser.add_argument('--winners', action='store_true', help='어제 승리팀 조회')
     parser.add_argument('--team', type=str, help='특정 팀 통계 조회')
     parser.add_argument('--test', action='store_true', help='테스트 실행 (더미 데이터)')
-    parser.add_argument('--google', action='store_true', help='구글 검색으로 크롤링')
-    parser.add_argument('--kbo', action='store_true', help='KBO 공식 사이트 크롤링')
-    parser.add_argument('--source', type=str, choices=['google', 'kbo', 'naver'], help='크롤링 소스 선택')
     
     args = parser.parse_args()
     
@@ -66,14 +60,7 @@ def main():
         date = datetime.strptime(args.date, '%Y%m%d')
         logger.info(f"크롤링 시작: {date.strftime('%Y-%m-%d')}")
         
-        if args.google or args.source == 'google':
-            logger.info("구글 검색 크롤링 사용")
-            games = run_google_real_crawler(date)
-        elif args.kbo or args.source == 'kbo':
-            logger.info("KBO 공식 사이트 크롤링 사용")
-            games = run_kbo_official_crawler(date)
-        else:
-            games = run_crawler(date)
+        games = run_unified_crawler(date)
         
         if games:
             print(f"\n{date.strftime('%Y-%m-%d')} 경기 결과:")
@@ -87,14 +74,7 @@ def main():
         date = datetime.now() - timedelta(days=1)
         logger.info(f"크롤링 시작: {date.strftime('%Y-%m-%d')}")
         
-        if args.google or args.source == 'google':
-            logger.info("구글 검색 크롤링 사용")
-            games = run_google_real_crawler(date)
-        elif args.kbo or args.source == 'kbo':
-            logger.info("KBO 공식 사이트 크롤링 사용")
-            games = run_kbo_official_crawler(date)
-        else:
-            games = run_crawler(date)
+        games = run_unified_crawler(date)
         
         if games:
             print(f"\n{date.strftime('%Y-%m-%d')} 경기 결과:")

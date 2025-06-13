@@ -14,8 +14,14 @@
 ## 설치
 
 ```bash
-# 의존성 설치
-pip install -r requirements.txt
+# 가상환경 설정 및 의존성 설치
+./setup.sh
+
+# 가상환경 활성화
+source venv/bin/activate
+
+# Playwright 브라우저 설치 (최초 1회)
+playwright install chromium
 ```
 
 ## 사용법
@@ -77,26 +83,25 @@ python tests/test_crawler.py
 ```
 baseball-win-crawler/
 ├── main.py             # 메인 실행 파일
+├── setup.sh            # 가상환경 설정 스크립트
 ├── src/
-│   ├── crawler.py      # Selenium 크롤러
-│   ├── kbo_api_crawler.py  # API 크롤러
-│   ├── simple_crawler.py   # 간단한 크롤러
-│   ├── parser.py       # HTML/JSON 파싱
+│   ├── unified_crawler.py  # 통합 크롤러 (KBO 공식 사이트 기반)
 │   ├── storage.py      # 데이터 저장
 │   ├── scheduler.py    # 스케줄러
 │   ├── logger.py       # 로깅
 │   └── config.py       # 설정
-├── tests/              # 테스트 코드
 ├── data/               # 수집된 데이터
 ├── logs/               # 로그 파일
-└── requirements.txt    # 의존성
+├── requirements.txt    # 의존성
+└── DEVELOPMENT_PLAN.md # 개발 계획 문서
 ```
 
 ## 주의사항
 
+- KBO 공식 사이트(www.koreabaseball.com)를 기본 데이터 소스로 사용합니다
 - 크롤링 대상 사이트의 구조가 변경되면 파싱 로직 수정이 필요할 수 있습니다
 - 과도한 요청은 차단될 수 있으므로 적절한 딜레이를 설정하세요
-- Selenium 사용 시 Chrome 드라이버가 자동으로 설치됩니다
+- Playwright를 사용하여 JavaScript 렌더링된 페이지를 크롤링합니다
 
 ## 문제 해결
 
@@ -105,9 +110,9 @@ baseball-win-crawler/
    - 대상 사이트 접속 가능 여부 확인
    - 로그 파일 확인 (`logs/crawler_YYYYMMDD.log`)
 
-2. **Selenium 오류 시**
-   - Chrome 브라우저 설치 확인
-   - `webdriver-manager` 재설치
+2. **Playwright 오류 시**
+   - `playwright install chromium` 실행
+   - `playwright install-deps` 실행 (Linux)
 
 3. **데이터 없음**
    - 월요일은 일반적으로 경기가 없습니다
