@@ -35,3 +35,4 @@ data/
 *.json
 !data/.gitkeep
 !logs/.gitkeep
+test_baseball/
